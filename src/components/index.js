@@ -5,3 +5,4 @@ export * from './ContactForm';
 export * from './ContactList';
 export * from './ContactItem';
 export * from './ContactStats';
+export * from './Spinner';

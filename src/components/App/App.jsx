@@ -6,16 +6,18 @@ import {
   ContactStats,
 } from 'components';
 
-import { useSelector } from 'react-redux';
-import { selectContact } from 'redux/selectors';
+// import { useSelector } from 'react-redux';
+// import { selectContact } from 'redux/selectors';
+import { ContactsPage } from 'pages/ContactsPage';
 
 export const App = () => {
-  const contacts = useSelector(selectContact);
+  // const contacts = useSelector(selectContact);
 
   return (
     <Container>
       <Section title="Phonebook">
-        <ContactForm />
+        <ContactsPage />
+        {/* <ContactForm />
         <ContactFilter />
         <ContactStats />
 
@@ -23,7 +25,7 @@ export const App = () => {
           <Text textAlign="center">There are no any numbers...</Text>
         ) : (
           <ContactList />
-        )}
+        )} */}
       </Section>
     </Container>
   );
