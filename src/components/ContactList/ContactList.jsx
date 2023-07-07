@@ -1,21 +1,19 @@
+import { ContactItem } from 'components';
+import { List, Item } from './ContactList.styled';
+
 export const ContactList = ({ contacts }) => {
   return (
-    <ul>
+    <List>
       {contacts.map(({ id, name, phone }) => (
-        <li key={id}>
-          <h3>
-            <strong>Name:</strong>
-            {name}
-          </h3>
-          <p>
-            <strong>Phone:</strong> {phone}
-          </p>
-        </li>
+        <Item key={id}>
+          <ContactItem id={id} name={name} phone={phone} />
+        </Item>
       ))}
-    </ul>
+    </List>
   );
 };
 
+// !=============
 // import PropTypes from 'prop-types';
 // import { ContactItem } from 'components';
 // import { List, Item } from './ContactList.styled';

@@ -7,12 +7,35 @@ export const contactsApi = createApi({
   }),
   endpoints: builder => ({
     fetchContacts: builder.query({
-      query: () => `/contacts/`,
+      query: () => `/contacts`,
+      providesTags: ['Contacts'],
+    }),
+    deleteContact: builder.mutation({
+      query: contactId => ({
+        url: `/contacts/${contactId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Contacts'],
+    }),
+    createContact: builder.mutation({
+      query: ({ contactName, contactPhone }) => ({
+        url: '/contacts',
+        method: 'POST',
+        body: {
+          name: contactName,
+          phone: contactPhone,
+        },
+      }),
+      invalidatesTags: ['Contacts'],
     }),
   }),
 });
 
-export const { useFetchContactsQuery } = contactsApi;
+export const {
+  useFetchContactsQuery,
+  useDeleteContactsMutation,
+  useCreateContactsMutation,
+} = contactsApi;
 
 // !==========
 // import { createSlice } from '@reduxjs/toolkit';
