@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import Notiflix from 'notiflix';
-import { Button } from '../ui';
+import { Button } from 'components/ui';
 import { StyledForm, Label, Input } from './ContactForm.styled';
 
-import { useCreateContactMutation } from '../../redux/contacts/contactsSlice';
-import { Spinner } from '../Spinner';
+import { useCreateContactMutation } from 'redux/contacts';
+import { Spinner } from 'components';
 
 export const ContactForm = () => {
   const [contactName, setContactName] = useState('');
