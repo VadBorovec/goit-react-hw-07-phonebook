@@ -1,21 +1,20 @@
 import { Spinner } from 'components';
 import { Button } from 'components/ui';
-import { Name, Number } from './ContactItem.styled';
+import { Item, Name, Number } from './ContactItem.styled';
 
-import { useDeleteContactsMutation } from 'redux/contacts';
+import { useDeleteContactMutation } from 'redux/contacts';
 
 export const ContactItem = ({ id, name, phone }) => {
-  // const [deleteContact, { isLoading: isDeleting }] =
-  //   useDeleteContactsMutation();
+  const [deleteTodo, { isLoading: isDeleting }] = useDeleteContactMutation();
 
   return (
-    <>
+    <Item>
       <Name>{name}</Name>
       <Number>{phone}</Number>
-      {/* <Button onClick={() => deleteContact(id)} disabled={isDeleting}>
+      <Button onClick={() => deleteTodo(id)} disabled={isDeleting}>
         {isDeleting && <Spinner size={12} />}
         Delete
-      </Button> */}
-    </>
+      </Button>
+    </Item>
   );
 };
