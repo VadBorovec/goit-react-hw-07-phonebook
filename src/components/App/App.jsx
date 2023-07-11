@@ -8,9 +8,8 @@ import { Container, Section } from 'components/ui';
 
 // import { useSelector } from 'react-redux';
 // import { selectContact } from 'redux/selectors';
-import { useFetchContactsQuery } from 'redux/contacts';
-import { Spinner, ContactForm, ContactList } from 'components';
-import { CreateTodo } from 'components/CreateTodo';
+import { useFetchContactsQuery } from 'redux/rtkQuery';
+import { Spinner, ContactForm, ContactFilter, ContactList } from 'components';
 
 export const App = () => {
   // const contacts = useSelector(selectContact);
@@ -20,7 +19,6 @@ export const App = () => {
   return (
     <Container>
       <Section title="Phonebook">
-        {/* <CreateTodo /> */}
         <ContactForm />
         {isFetching && <Spinner />}
         {/* {contacts && <ContactList contacts={contacts} />} */}

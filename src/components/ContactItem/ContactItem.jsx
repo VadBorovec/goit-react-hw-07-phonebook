@@ -2,7 +2,7 @@ import { Spinner } from 'components';
 import { Button } from 'components/ui';
 import { Item, Name, Number } from './ContactItem.styled';
 
-import { useDeleteContactMutation } from 'redux/contacts';
+import { useDeleteContactMutation } from 'redux/rtkQuery';
 
 export const ContactItem = ({ id, name, phone }) => {
   const [deleteTodo, { isLoading: isDeleting }] = useDeleteContactMutation();

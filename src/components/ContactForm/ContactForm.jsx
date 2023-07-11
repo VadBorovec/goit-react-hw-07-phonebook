@@ -4,7 +4,7 @@ import { Spinner } from 'components';
 import { Button } from 'components/ui';
 import { StyledForm, Label, Input } from './ContactForm.styled';
 
-import { useCreateContactMutation } from 'redux/contacts';
+import { useCreateContactMutation } from 'redux/rtkQuery';
 
 export const ContactForm = () => {
   // const [contactName, setContactName] = useState('');
