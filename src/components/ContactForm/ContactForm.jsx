@@ -1,34 +1,37 @@
-// import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Notiflix from 'notiflix';
+
+import { addContact } from 'redux/operations';
+import { selectIsLoading } from 'redux/selectors';
+
 import { Spinner } from 'components';
 import { Button } from 'components/ui';
 import { StyledForm, Label, Input } from './ContactForm.styled';
 
-import { useCreateContactMutation } from 'redux/rtkQuery';
-
 export const ContactForm = () => {
-  // const [contactName, setContactName] = useState('');
-  // const [contactPhone, setContactPhone] = useState('');
-  const [createContact, { isLoading }] = useCreateContactMutation();
+  const dispatch = useDispatch();
+  const isLoading = useSelector(selectIsLoading);
 
   const handleSubmit = async e => {
     e.preventDefault();
 
-    const contactName = e.currentTarget.elements.name.value;
-    const contactPhone = e.currentTarget.elements.phone.value;
+    const form = e.currentTarget;
+    const contactName = form.elements.name.value;
+    const contactPhone = form.elements.phone.value;
 
     if (!contactName || !contactPhone) {
       Notiflix.Notify.warning('Please enter name and phone number');
       return;
     }
 
-    createContact({
-      contactName,
-      contactPhone,
-    });
+    dispatch(
+      addContact({
+        contactName,
+        contactPhone,
+      })
+    );
 
-    e.currentTarget.reset();
-
+    form.reset();
     Notiflix.Notify.success(`${contactName} has been added to  your phonebook`);
   };
 
@@ -39,19 +42,19 @@ export const ContactForm = () => {
         <Input
           type="text"
           name="name"
-          // value={contactName}
-          // onChange={e => setContactName(e.target.value)}
+          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
           placeholder="Enter name"
+          required
         />
       </Label>
       <Label htmlFor="phone">
         Number
         <Input
-          type="text"
+          type="tel"
           name="phone"
-          // value={contactPhone}
-          // onChange={e => setContactPhone(e.target.value)}
+          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           placeholder="Enter number"
+          required
         />
       </Label>
       <Button type="submit" disabled={isLoading}>
@@ -62,6 +65,66 @@ export const ContactForm = () => {
   );
 };
 
+// !==============RTK Query==============
+// import Notiflix from 'notiflix';
+// import { Spinner } from 'components';
+// import { Button } from 'components/ui';
+// import { StyledForm, Label, Input } from './ContactForm.styled';
+// import { useCreateContactMutation } from 'redux/rtkQuery';
+
+// export const ContactForm = () => {
+//   const [createContact, { isLoading }] = useCreateContactMutation();
+
+//   const handleSubmit = async e => {
+//     e.preventDefault();
+
+//     const contactName = e.currentTarget.elements.name.value;
+//     const contactPhone = e.currentTarget.elements.phone.value;
+
+//     if (!contactName || !contactPhone) {
+//       Notiflix.Notify.warning('Please enter name and phone number');
+//       return;
+//     }
+
+//     createContact({
+//       contactName,
+//       contactPhone,
+//     });
+
+//     e.currentTarget.reset();
+
+//     Notiflix.Notify.success(`${contactName} has been added to  your phonebook`);
+//   };
+
+//   return (
+//     <StyledForm autoComplete="off" onSubmit={handleSubmit}>
+//       <Label htmlFor="name">
+//         Name
+//         <Input
+//           type="text"
+//           name="name"
+//           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+//           placeholder="Enter name"
+//           required
+//         />
+//       </Label>
+//       <Label htmlFor="phone">
+//         Number
+//         <Input
+//           type="tel"
+//           name="phone"
+//           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+//           placeholder="Enter number"
+//           required
+//         />
+//       </Label>
+//       <Button type="submit" disabled={isLoading}>
+//         {isLoading && <Spinner size={12} />}
+//         Add contact
+//       </Button>
+//     </StyledForm>
+//   );
+// };
 // !=======
 // import { Formik, Field, ErrorMessage } from 'formik';
 // import * as Yup from 'yup';

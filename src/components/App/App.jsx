@@ -1,33 +1,56 @@
-import { Container, Section } from 'components/ui';
-// import {
-//   ContactFilter,
-//   ContactForm,
-//   ContactList,
-//   ContactStats,
-// } from 'components';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-// import { useSelector } from 'react-redux';
-// import { selectContact } from 'redux/selectors';
-import { useFetchContactsQuery } from 'redux/rtkQuery';
-import { Spinner, ContactForm, ContactFilter, ContactList } from 'components';
+import { fetchContacts } from 'redux/operations';
+import { selectError, selectIsLoading } from 'redux/selectors';
+
+import { Container, Section } from 'components/ui';
+import {
+  Spinner,
+  ContactForm,
+  ContactFilter,
+  ContactStats,
+  ContactList,
+} from 'components';
 
 export const App = () => {
-  // const contacts = useSelector(selectContact);
-  const { data: contacts, isFetching } = useFetchContactsQuery();
-  console.log(contacts);
+  const dispatch = useDispatch();
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
 
   return (
     <Container>
       <Section title="Phonebook">
         <ContactForm />
-        {isFetching && <Spinner />}
-        {/* {contacts && <ContactList contacts={contacts} />} */}
-
-        {/* <ContactFilter /> */}
-        {/* <ContactStats /> */}
-
-        {contacts && <ContactList contacts={contacts} />}
+        {isLoading && !error && <Spinner />}
+        <ContactFilter />
+        <ContactStats />
+        <ContactList />
       </Section>
     </Container>
   );
 };
+
+// !==============RTK Query==============
+// import { useFetchContactsQuery } from 'redux/rtkQuery';
+// import { Container, Section } from 'components/ui';
+// import { Spinner, ContactForm, ContactList } from 'components';
+
+// export const App = () => {
+//   const { data: contacts, isFetching } = useFetchContactsQuery();
+
+//   return (
+//     <Container>
+//       <Section title="Phonebook">
+//         <ContactForm />
+//         {isFetching && <Spinner />}
+//         {contacts && <ContactList contacts={contacts} />}
+//       </Section>
+//     </Container>
+//   );
+// };
+// !=====================================
