@@ -9,7 +9,8 @@ import { Container, Section } from 'components/ui';
 // import { useSelector } from 'react-redux';
 // import { selectContact } from 'redux/selectors';
 import { useFetchContactsQuery } from 'redux/contacts';
-import { Spinner, ContactForm, ContactList, CreateTodo } from 'components';
+import { Spinner, ContactForm, ContactList } from 'components';
+import { CreateTodo } from 'components/CreateTodo';
 
 export const App = () => {
   // const contacts = useSelector(selectContact);

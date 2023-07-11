@@ -1,18 +1,21 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import Notiflix from 'notiflix';
+import { Spinner } from 'components';
 import { Button } from 'components/ui';
 import { StyledForm, Label, Input } from './ContactForm.styled';
 
 import { useCreateContactMutation } from 'redux/contacts';
-import { Spinner } from 'components';
 
 export const ContactForm = () => {
-  const [contactName, setContactName] = useState('');
-  const [contactPhone, setContactPhone] = useState('');
-  const [createContact, { isLoading, isSuccess }] = useCreateContactMutation();
+  // const [contactName, setContactName] = useState('');
+  // const [contactPhone, setContactPhone] = useState('');
+  const [createContact, { isLoading }] = useCreateContactMutation();
 
-  const handleSubmit = e => {
+  const handleSubmit = async e => {
     e.preventDefault();
+
+    const contactName = e.currentTarget.elements.name.value;
+    const contactPhone = e.currentTarget.elements.phone.value;
 
     if (!contactName || !contactPhone) {
       Notiflix.Notify.warning('Please enter name and phone number');
@@ -24,9 +27,9 @@ export const ContactForm = () => {
       contactPhone,
     });
 
+    e.currentTarget.reset();
+
     Notiflix.Notify.success(`${contactName} has been added to  your phonebook`);
-    setContactName('');
-    setContactPhone('');
   };
 
   return (
@@ -36,8 +39,8 @@ export const ContactForm = () => {
         <Input
           type="text"
           name="name"
-          value={contactName}
-          onChange={e => setContactName(e.target.value)}
+          // value={contactName}
+          // onChange={e => setContactName(e.target.value)}
           placeholder="Enter name"
         />
       </Label>
@@ -46,8 +49,8 @@ export const ContactForm = () => {
         <Input
           type="text"
           name="phone"
-          value={contactPhone}
-          onChange={e => setContactPhone(e.target.value)}
+          // value={contactPhone}
+          // onChange={e => setContactPhone(e.target.value)}
           placeholder="Enter number"
         />
       </Label>
