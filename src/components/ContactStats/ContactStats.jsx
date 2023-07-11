@@ -1,7 +1,8 @@
-import PropTypes from 'prop-types';
-import { Box, Text } from './ContactStats.styled';
 import { useSelector } from 'react-redux';
+
 import { selectContact } from 'redux/selectors';
+
+import { Box, Text } from './ContactStats.styled';
 
 export const ContactStats = () => {
   const contacts = useSelector(selectContact);
@@ -13,8 +14,4 @@ export const ContactStats = () => {
       <Text>Total contacts: {totalContactCount}</Text>
     </Box>
   );
-};
-
-ContactStats.propTypes = {
-  totalContactCount: PropTypes.number.isRequired,
 };
