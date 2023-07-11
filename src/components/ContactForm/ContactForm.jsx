@@ -1,42 +1,81 @@
 import { useDispatch, useSelector } from 'react-redux';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import shortid from 'shortid';
 import Notiflix from 'notiflix';
 
 import { addContact } from 'redux/operations';
-import { selectIsLoading } from 'redux/selectors';
+import { selectContacts, selectIsLoading } from 'redux/selectors';
 
 import { Spinner } from 'components';
 import { Button } from 'components/ui';
-import { StyledForm, Label, Input } from './ContactForm.styled';
+import { StyledForm, Label, Input, Error } from './ContactForm.styled';
+
+const validationSchema = Yup.object().shape({
+  name: Yup.string()
+    .matches(
+      /^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$/,
+      "Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
+    )
+    .required('Name is required'),
+  phone: Yup.string()
+    .matches(
+      /\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/,
+      'Phone number must be digits and can contain spaces, dashes, parentheses and can start with +'
+    )
+    .required('Number is required'),
+});
 
 export const ContactForm = () => {
   const dispatch = useDispatch();
+  const contacts = useSelector(selectContacts);
   const isLoading = useSelector(selectIsLoading);
 
-  const handleSubmit = async e => {
-    e.preventDefault();
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      phone: '',
+    },
+    validationSchema,
+    onSubmit: (values, { resetForm }) => {
+      const contact = {
+        id: shortid.generate(),
+        name: values.name,
+        phone: values.phone,
+      };
 
-    const form = e.currentTarget;
-    const contactName = form.elements.name.value;
-    const contactPhone = form.elements.phone.value;
+      const existingName = contacts.find(
+        contact => contact.name.toLowerCase() === values.name.toLowerCase()
+      );
+      const existingNumber = contacts.find(
+        contact =>
+          contact.phone.replace(/[^\d]/g, '') ===
+          values.phone.replace(/[^\d]/g, '')
+      );
 
-    if (!contactName || !contactPhone) {
-      Notiflix.Notify.warning('Please enter name and phone number');
-      return;
-    }
+      if (existingName) {
+        Notiflix.Notify.failure(
+          `Contact with this name - ${values.name} already exists!`
+        );
+        return;
+      } else if (existingNumber) {
+        Notiflix.Notify.failure(
+          `Contact with this number - ${values.phone} already exists!`
+        );
+        return;
+      }
 
-    dispatch(
-      addContact({
-        contactName,
-        contactPhone,
-      })
-    );
+      dispatch(addContact(contact));
 
-    form.reset();
-    Notiflix.Notify.success(`${contactName} has been added to  your phonebook`);
-  };
+      resetForm();
+      Notiflix.Notify.success(
+        `${values.name} has been added to your phonebook`
+      );
+    },
+  });
 
   return (
-    <StyledForm autoComplete="off" onSubmit={handleSubmit}>
+    <StyledForm autoComplete="off" onSubmit={formik.handleSubmit}>
       <Label htmlFor="name">
         Name
         <Input
@@ -44,8 +83,11 @@ export const ContactForm = () => {
           name="name"
           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
           placeholder="Enter name"
-          required
+          {...formik.getFieldProps('name')}
         />
+        {formik.touched.name && formik.errors.name && (
+          <Error>{formik.errors.name}</Error>
+        )}
       </Label>
       <Label htmlFor="phone">
         Number
@@ -54,8 +96,11 @@ export const ContactForm = () => {
           name="phone"
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           placeholder="Enter number"
-          required
+          {...formik.getFieldProps('phone')}
         />
+        {formik.touched.phone && formik.errors.phone && (
+          <Error>{formik.errors.phone}</Error>
+        )}
       </Label>
       <Button type="submit" disabled={isLoading}>
         {isLoading && <Spinner size={12} />}
@@ -125,110 +170,97 @@ export const ContactForm = () => {
 //     </StyledForm>
 //   );
 // };
-// !=======
-// import { Formik, Field, ErrorMessage } from 'formik';
-// import * as Yup from 'yup';
-// import { Button } from 'components/ui';
-// import { StyledForm, Label, Input, Error } from './ContactForm.styled';
-// import shortid from 'shortid';
+// !====================
 // import { useDispatch, useSelector } from 'react-redux';
-// import { add } from 'redux/contactsSlice';
 // import Notiflix from 'notiflix';
-// import { selectContact } from 'redux/selectors';
 
-// const schema = Yup.object().shape({
-//   name: Yup.string()
-//     .matches(
-//       /^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$/,
-//       "Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-//     )
-//     .required('Name is required'),
-//   number: Yup.string()
-//     .matches(
-//       /\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/,
-//       'Phone number must be digits and can contain spaces, dashes, parentheses and can start with +'
-//     )
-//     .required('Number is required'),
-// });
+// import { addContact } from 'redux/operations';
+// import { selectContacts, selectIsLoading } from 'redux/selectors';
 
-// // !=====functional component
+// import { Spinner } from 'components';
+// import { Button } from 'components/ui';
+// import { StyledForm, Label, Input } from './ContactForm.styled';
 
 // export const ContactForm = () => {
-//   const contacts = useSelector(selectContact);
 //   const dispatch = useDispatch();
+//   const contacts = useSelector(selectContacts);
+//   const isLoading = useSelector(selectIsLoading);
 
-//   const handleSubmit = (values, { setSubmitting, resetForm }) => {
-//     const contact = {
-//       id: shortid.generate(),
-//       name: values.name,
-//       number: values.number,
-//     };
+//   const handleSubmit = async e => {
+//     e.preventDefault();
+
+//     const form = e.currentTarget;
+//     const contactName = form.elements.name.value;
+//     const contactPhone = form.elements.phone.value;
+
 //     const existingName = contacts.find(
-//       contact => contact.name.toLowerCase() === values.name.toLowerCase()
+//       contact => contact.name.toLowerCase() === contactName.toLowerCase()
 //     );
 //     const existingNumber = contacts.find(
-//       contact =>
-//         contact.number.replace(/[^\d]/g, '') ===
-//         values.number.replace(/[^\d]/g, '')
+//       contact => contact.phone === contactPhone
 //     );
+
+//     // * перестала працювати дана перевірка..раніше працювала
+//     // const existingNumber = contacts.find(contact => {
+//     //   const storedPhone = contact.phone.toLowerCase().replace(/\D/g, '');
+//     //   const formPhone = contactPhone.toLowerCase().replace(/\D/g, '');
+//     //   return storedPhone.includes(formPhone);
+//     // });
 
 //     if (existingName) {
 //       Notiflix.Notify.failure(
-//         `Contact with this name - ${contact.name} already exists!`
+//         `Contact with this name - ${contactName} already exists!`
 //       );
-//       setSubmitting(false);
 //       return;
 //     } else if (existingNumber) {
 //       Notiflix.Notify.failure(
-//         `Contact with this number - ${contact.number} already exists!`
+//         `Contact with this number - ${contactPhone} already exists!`
 //       );
-//       setSubmitting(false);
 //       return;
 //     }
 
-//     Notiflix.Notify.success(
-//       `${contact.name} has been added to  your phonebook`
+//     if (!contactName || !contactPhone) {
+//       Notiflix.Notify.warning('Please enter name and phone number');
+//       return;
+//     }
+
+//     dispatch(
+//       addContact({
+//         name: contactName,
+//         phone: contactPhone,
+//       })
 //     );
 
-//     // setSubmitting(false);
-//     dispatch(add(contact));
-
-//     resetForm();
+//     form.reset();
+//     Notiflix.Notify.success(`${contactName} has been added to  your phonebook`);
 //   };
 
 //   return (
-//     <Formik
-//       initialValues={{ name: '', number: '' }}
-//       validationSchema={schema}
-//       onSubmit={handleSubmit}
-//     >
-//       {({ isSubmitting }) => (
-//         <StyledForm>
-//           <Label htmlFor="name">
-//             Name
-//             <Field
-//               type="text"
-//               name="name"
-//               as={Input}
-//               placeholder="Enter name"
-//             />
-//             <ErrorMessage name="name" component={Error} />
-//           </Label>
-//           <Label htmlFor="number">
-//             Number
-//             <Field
-//               type="text"
-//               name="number"
-//               as={Input}
-//               placeholder="Enter number"
-//             />
-//             <ErrorMessage name="number" component={Error} />
-//           </Label>
-//           <Button type="submit" disabled={isSubmitting}>
-//             Add contact
-//           </Button>
-//         </StyledForm>
-//       )}
-//     </Formik>
+//     <StyledForm autoComplete="off" onSubmit={handleSubmit}>
+//       <Label htmlFor="name">
+//         Name
+//         <Input
+//           type="text"
+//           name="name"
+//           pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
+//           placeholder="Enter name"
+//           // required
+//         />
+//       </Label>
+//       <Label htmlFor="phone">
+//         Number
+//         <Input
+//           type="tel"
+//           name="phone"
+//           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
+//           placeholder="Enter number"
+//           // required
+//         />
+//       </Label>
+//       <Button type="submit" disabled={isLoading}>
+//         {isLoading && <Spinner size={12} />}
+//         Add contact
+//       </Button>
+//     </StyledForm>
 //   );
 // };

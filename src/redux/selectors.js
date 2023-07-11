@@ -16,15 +16,3 @@ export const visibleContacts = createSelector(
     );
   }
 );
-
-export const selectContactsCount = createSelector(
-  [selectContacts],
-  contacts => {
-    console.log('Calculating task count');
-
-    return contacts.reduce((count, contact) => {
-      count += 1;
-      return count;
-    }, 0);
-  }
-);
