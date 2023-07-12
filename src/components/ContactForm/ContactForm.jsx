@@ -65,12 +65,14 @@ export const ContactForm = () => {
         return;
       }
 
-      dispatch(addContact(contact));
-
-      resetForm();
-      Notiflix.Notify.success(
-        `${values.name} has been added to your phonebook`
-      );
+      dispatch(addContact(contact))
+        .then(
+          Notiflix.Notify.success(
+            `${values.name} has been added to your phonebook`
+          )
+        )
+        .catch(error => console.log(error.message))
+        .finally(resetForm());
     },
   });
 
