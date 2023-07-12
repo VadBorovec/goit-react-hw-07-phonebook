@@ -81,7 +81,6 @@ export const ContactForm = () => {
         <Input
           type="text"
           name="name"
-          pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
           placeholder="Enter name"
           {...formik.getFieldProps('name')}
         />
@@ -94,7 +93,6 @@ export const ContactForm = () => {
         <Input
           type="tel"
           name="phone"
-          pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           placeholder="Enter number"
           {...formik.getFieldProps('phone')}
         />
@@ -170,7 +168,7 @@ export const ContactForm = () => {
 //     </StyledForm>
 //   );
 // };
-// !====================
+// !====================without formik
 // import { useDispatch, useSelector } from 'react-redux';
 // import Notiflix from 'notiflix';
 

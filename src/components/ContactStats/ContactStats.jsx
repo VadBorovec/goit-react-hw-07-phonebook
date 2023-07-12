@@ -8,7 +8,6 @@ export const ContactStats = () => {
   const contacts = useSelector(selectContacts);
 
   const totalContactCount = contacts.length;
-  console.log(totalContactCount);
 
   return (
     <Box>
